@@ -1,4 +1,4 @@
-package telran.java2022.forum.service;
+package telran.java2022.post.service;
 
 import java.util.HashSet;
 import java.util.List;
@@ -8,15 +8,15 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import telran.java2022.forum.dao.ForumRepository;
-import telran.java2022.forum.dto.CommentDto;
-import telran.java2022.forum.dto.PostCreateDto;
-import telran.java2022.forum.dto.PostDto;
-import telran.java2022.forum.dto.PostGetByPeriodDto;
-import telran.java2022.forum.dto.PostUpdateDto;
-import telran.java2022.forum.dto.exceptions.PostNotFoundException;
-import telran.java2022.forum.model.Comment;
-import telran.java2022.forum.model.Post;
+import telran.java2022.post.dao.ForumRepository;
+import telran.java2022.post.dto.CommentDto;
+import telran.java2022.post.dto.PostCreateDto;
+import telran.java2022.post.dto.PostDto;
+import telran.java2022.post.dto.PostGetByPeriodDto;
+import telran.java2022.post.dto.PostUpdateDto;
+import telran.java2022.post.dto.exceptions.PostNotFoundException;
+import telran.java2022.post.model.Comment;
+import telran.java2022.post.model.Post;
 
 @Service
 @RequiredArgsConstructor

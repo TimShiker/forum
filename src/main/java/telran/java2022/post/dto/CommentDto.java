@@ -1,4 +1,4 @@
-package telran.java2022.forum.dto;
+package telran.java2022.post.dto;
 
 import java.time.LocalDateTime;
 

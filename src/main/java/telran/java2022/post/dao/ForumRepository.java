@@ -1,4 +1,4 @@
-package telran.java2022.forum.dao;
+package telran.java2022.post.dao;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
-import telran.java2022.forum.model.Post;
+import telran.java2022.post.model.Post;
 
 public interface ForumRepository extends CrudRepository<Post, String>{
 	

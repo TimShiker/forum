@@ -1,4 +1,4 @@
-package telran.java2022.forum.model;
+package telran.java2022.post.model;
 
 import java.time.LocalDateTime;
 

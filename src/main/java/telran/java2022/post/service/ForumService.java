@@ -1,13 +1,13 @@
-package telran.java2022.forum.service;
+package telran.java2022.post.service;
 
 import java.util.HashSet;
 import java.util.List;
 
-import telran.java2022.forum.dto.CommentDto;
-import telran.java2022.forum.dto.PostCreateDto;
-import telran.java2022.forum.dto.PostDto;
-import telran.java2022.forum.dto.PostGetByPeriodDto;
-import telran.java2022.forum.dto.PostUpdateDto;
+import telran.java2022.post.dto.CommentDto;
+import telran.java2022.post.dto.PostCreateDto;
+import telran.java2022.post.dto.PostDto;
+import telran.java2022.post.dto.PostGetByPeriodDto;
+import telran.java2022.post.dto.PostUpdateDto;
 
 public interface ForumService {
 	
