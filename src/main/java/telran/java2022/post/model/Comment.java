@@ -15,7 +15,7 @@ public class Comment {
 	@Setter
 	String message;
 	
-	LocalDateTime dateCreated = LocalDateTime.now().withNano(0);
+	LocalDateTime dateCreated = LocalDateTime.now();
 	
 	@Setter
 	int likes;

@@ -20,14 +20,14 @@ import telran.java2022.post.dto.PostCreateDto;
 import telran.java2022.post.dto.PostDto;
 import telran.java2022.post.dto.PostGetByPeriodDto;
 import telran.java2022.post.dto.PostUpdateDto;
-import telran.java2022.post.service.ForumService;
+import telran.java2022.post.service.PostService;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/forum")
 public class PostController {
 	
-	final ForumService forumService;
+	final PostService forumService;
 	
 	@PostMapping("/post/{author}")
 	public PostDto addPost(@PathVariable String author, @RequestBody PostCreateDto postCreateDto) {

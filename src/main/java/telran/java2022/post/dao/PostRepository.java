@@ -10,7 +10,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import telran.java2022.post.model.Post;
 
-public interface ForumRepository extends CrudRepository<Post, String>{
+public interface PostRepository extends CrudRepository<Post, String>{
 	
 	Stream<Post> findByAuthorIgnoreCase(String author);
 	

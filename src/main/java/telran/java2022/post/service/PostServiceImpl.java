@@ -8,7 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import telran.java2022.post.dao.ForumRepository;
+import telran.java2022.post.dao.PostRepository;
 import telran.java2022.post.dto.CommentDto;
 import telran.java2022.post.dto.PostCreateDto;
 import telran.java2022.post.dto.PostDto;
@@ -20,9 +20,9 @@ import telran.java2022.post.model.Post;
 
 @Service
 @RequiredArgsConstructor
-public class ForumServiceImpl implements ForumService{
+public class PostServiceImpl implements PostService{
 	
-	final ForumRepository forumRepository;
+	final PostRepository forumRepository;
 	final ModelMapper modelMapper;
 
 	@Override

@@ -9,7 +9,7 @@ import telran.java2022.post.dto.PostDto;
 import telran.java2022.post.dto.PostGetByPeriodDto;
 import telran.java2022.post.dto.PostUpdateDto;
 
-public interface ForumService {
+public interface PostService {
 	
 	PostDto addPost(String author, PostCreateDto postCreateDto);
 	
