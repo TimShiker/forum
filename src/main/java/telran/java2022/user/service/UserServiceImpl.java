@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import telran.java2022.user.dao.UserRepository;
 import telran.java2022.user.dto.LoginUserDto;
+import telran.java2022.user.dto.RolesResponseDto;
 import telran.java2022.user.dto.UpdateUserDto;
 import telran.java2022.user.dto.CreateUserDto;
 import telran.java2022.user.dto.UserDto;
@@ -34,13 +35,9 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public UserDto loginUser(LoginUserDto loginUserDto) {
-		User user = userRepository.findById(loginUserDto.getLogin())
-				.orElseThrow(() -> new UserNotFoundException(loginUserDto.getLogin()));
-		
-		if(!user.getPassword().equals(loginUserDto.getPassword())) {
-			throw new PasswordNotCorrectException(loginUserDto.getPassword());
-		}
+	public UserDto loginUser(String login) {
+		User user = userRepository.findById(login)
+				.orElseThrow(() -> new UserNotFoundException(login));
 		
 		return modelMapper.map(user, UserDto.class);
 	}
@@ -57,21 +54,25 @@ public class UserServiceImpl implements UserService{
 	public UserDto updateUser(String login, UpdateUserDto updateUserDto) {
 		User user = userRepository.findById(login)
 				.orElseThrow(() -> new UserNotFoundException(login));
+		if(updateUserDto.getFirstName() != null) {
+			user.setFirstName(updateUserDto.getFirstName());
+		}
+		if(updateUserDto.getLastName() != null) {
+			user.setLastName(updateUserDto.getLastName());
+		}
 		
-		user.setFirstName(updateUserDto.getFirstName());
-		user.setLastName(updateUserDto.getLastName());
 		userRepository.save(user);
 		return modelMapper.map(user, UserDto.class);
 	}
 
 	@Override
-	public UserDto addRole(String login, String role) {
+	public RolesResponseDto addRole(String login, String role) {
 		User user = userRepository.findById(login)
 				.orElseThrow(() -> new UserNotFoundException(login));
 		
-		user.getRoles().add(role);
+		user.getRoles().add(role.toUpperCase());
 		userRepository.save(user);
-		return modelMapper.map(user, UserDto.class);
+		return modelMapper.map(user, RolesResponseDto.class);
 	}
 
 	@Override
@@ -79,7 +80,7 @@ public class UserServiceImpl implements UserService{
 		User user = userRepository.findById(login)
 				.orElseThrow(() -> new UserNotFoundException(login));
 		
-		user.getRoles().remove(role);
+		user.getRoles().remove(role.toUpperCase());
 		userRepository.save(user);
 		return modelMapper.map(user, UserDto.class);
 	}
