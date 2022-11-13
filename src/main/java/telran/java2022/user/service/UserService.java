@@ -1,6 +1,5 @@
 package telran.java2022.user.service;
 
-import telran.java2022.user.dto.LoginUserDto;
 import telran.java2022.user.dto.RolesResponseDto;
 import telran.java2022.user.dto.UpdateUserDto;
 import telran.java2022.user.dto.CreateUserDto;
@@ -19,6 +18,6 @@ public interface UserService {
 	
 	UserDto deleteRole(String login, String role);
 	
-	void changePassword(LoginUserDto loginUserDto);
+	void changePassword(String login, String newPassword);
 
 }

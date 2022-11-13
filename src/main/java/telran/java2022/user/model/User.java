@@ -37,4 +37,8 @@ public class User {
 		this.login = login;
 		this.password = password;
 	}
+	
+	public void setRole(String role) {
+		roles.add(role);
+	}
 }
