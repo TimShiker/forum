@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import telran.java2022.post.dao.PostRepository;
 import telran.java2022.post.dto.exceptions.PostNotFoundException;
 import telran.java2022.post.model.Post;
+import telran.java2022.security.context.SecurityContext;
 import telran.java2022.user.dao.UserRepository;
 import telran.java2022.user.model.User;
 
@@ -26,7 +27,7 @@ import telran.java2022.user.model.User;
 public class OwnerPostFilter implements Filter {
 
 	final PostRepository postRepository;
-	final UserRepository userRepository;
+	final SecurityContext context;
 	
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
@@ -36,20 +37,20 @@ public class OwnerPostFilter implements Filter {
 
 		if (checkEndPoint(request.getServletPath())) {
 			
-			User user = userRepository
-					.findById(request.getUserPrincipal().getName()).get();
+			telran.java2022.security.context.User user = 
+					context.getUser(request.getUserPrincipal().getName());
 			
 			if(isPostMethod(request.getMethod())){
 				String loginFromPathVariable = getPathVariableFromServletPath(request.getServletPath());
 				
-				if(!loginFromPathVariable.equals(user.getLogin())) {
+				if(!loginFromPathVariable.equals(user.getUserName())) {
 					response.sendError(403);
 					return;
 				}				
 			}
 			else if(request.getServletPath().contains("comment")) {
 				String authorOfComment = getAuthorComment(request.getServletPath());
-				if(!authorOfComment.equals(user.getLogin())) {
+				if(!authorOfComment.equals(user.getUserName())) {
 					response.sendError(403);
 					return;
 				}
@@ -58,10 +59,10 @@ public class OwnerPostFilter implements Filter {
 				String idPost = getPathVariableFromServletPath(request.getServletPath());
 				Post post = postRepository.findById(idPost).orElseThrow(() -> new PostNotFoundException(idPost));
 
-				if(isDeleteMethod(request.getMethod()) && !post.getAuthor().equals(user.getLogin())) {
+				if(isDeleteMethod(request.getMethod()) && !post.getAuthor().equals(user.getUserName())) {
 					request.setAttribute("ExecuteModeratorFilter", true);
 				}
-				else if(!post.getAuthor().equals(user.getLogin()) && isPutMethod(request.getMethod())) {
+				else if(!post.getAuthor().equals(user.getUserName()) && isPutMethod(request.getMethod())) {
 					response.sendError(403);
 					return;
 				}

@@ -14,6 +14,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
+import telran.java2022.security.context.SecurityContext;
 import telran.java2022.user.dao.UserRepository;
 import telran.java2022.user.model.User;
 
@@ -22,7 +23,7 @@ import telran.java2022.user.model.User;
 @Order(35)
 public class ModeratorFilter implements Filter {
 
-	final UserRepository userRepository;
+	final SecurityContext context;
 	
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
@@ -33,8 +34,8 @@ public class ModeratorFilter implements Filter {
 		if(checkEndPoint(request.getMethod(), request.getServletPath()) 
 				&& request.getAttribute("ExecuteModeratorFilter") != null){
 			
-			User user = userRepository
-					.findById(request.getUserPrincipal().getName()).get();
+			telran.java2022.security.context.User user = 
+					context.getUser(request.getUserPrincipal().getName());
 			
 			if(!user.getRoles().contains("Moderator".toUpperCase())) {
 				response.sendError(403);

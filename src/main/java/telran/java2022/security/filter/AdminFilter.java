@@ -14,6 +14,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
+import telran.java2022.security.context.SecurityContext;
 import telran.java2022.user.dao.UserRepository;
 import telran.java2022.user.model.User;
 
@@ -22,7 +23,7 @@ import telran.java2022.user.model.User;
 @Order(30)
 public class AdminFilter implements Filter {
 
-	final UserRepository userRepository;
+	final SecurityContext context;
 	
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
@@ -33,8 +34,7 @@ public class AdminFilter implements Filter {
 		if((isDeleteEndPoint(request.getMethod(), request.getServletPath()) && request.getAttribute("ExecuteAdminFilter") != null) 
 				|| checkEndPoint(request.getMethod(), request.getServletPath())){
 			
-			User user = userRepository
-					.findById(request.getUserPrincipal().getName()).get();
+			telran.java2022.security.context.User user = context.getUser(request.getUserPrincipal().getName());
 			
 			if(!user.getRoles().contains("Administrator".toUpperCase())) {
 				response.sendError(403);

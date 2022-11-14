@@ -17,6 +17,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
+import telran.java2022.security.context.SecurityContext;
+import telran.java2022.security.service.SessionService;
 import telran.java2022.user.dao.UserRepository;
 import telran.java2022.user.model.User;
 
@@ -24,8 +26,10 @@ import telran.java2022.user.model.User;
 @RequiredArgsConstructor
 @Order(10)
 public class AuthenticationFilter implements Filter {
-	
+
 	final UserRepository userRepository;
+	final SecurityContext context;
+	final SessionService sessionService;
 
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
@@ -33,18 +37,41 @@ public class AuthenticationFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
 		if (checkEndPoint(request.getMethod(), request.getServletPath())) {
+			
 			String token = request.getHeader("Authorization");
-			if(token == null) {
-				response.sendError(401);
-				return;
+			String sessionId = request.getSession().getId();
+			User userAccount = null;
+			
+			if(token != null) {
+				String[] credentials;
+				try {
+					credentials = getCredentialsFromToken(token);
+				} catch (Exception e) {
+					response.sendError(401, "Invalid token");
+					return;
+				}
+				userAccount = userRepository.findById(credentials[0]).orElse(null);
+				if(userAccount == null || !BCrypt.checkpw(credentials[1], userAccount.getPassword())) {
+					response.sendError(401, "login or password is invalid");
+					return;
+				}
+				sessionService.addUser(sessionId, userAccount);
 			}
-			String[] credentials = getCredentialsFromToken(token);
-			User userAccount = userRepository.findById(credentials[0]).orElse(null);
-			if(userAccount == null || !BCrypt.checkpw(credentials[1], userAccount.getPassword())) {
-				response.sendError(401, "login or password is invalid");
-				return;
+			else {
+				userAccount = sessionService.getUser(sessionId);	
+				if (userAccount == null) {
+						response.sendError(401);
+						return;
+				}			
+				
+				telran.java2022.security.context.User user = telran.java2022.security.context.User.builder()
+									.userName(userAccount.getLogin())
+									.password(userAccount.getPassword())
+									.roles(userAccount.getRoles())
+									.build();
+				context.addUser(user);
 			}
-			request = new WrappedRequest(request, userAccount.getLogin());		
+			request = new WrappedRequest(request, userAccount.getLogin());
 		}
 		chain.doFilter(request, response);
 	}
@@ -57,17 +84,18 @@ public class AuthenticationFilter implements Filter {
 	}
 
 	private boolean checkEndPoint(String method, String servletPath) {
-		return !("POST".equalsIgnoreCase(method) && servletPath.equals("/account/register") || (servletPath.matches("/forum/posts/.+")));
+		return !("POST".equalsIgnoreCase(method) && servletPath.equals("/account/register")
+				|| (servletPath.matches("/forum/posts/.+")));
 	}
-	
-	private class WrappedRequest extends HttpServletRequestWrapper{
+
+	private class WrappedRequest extends HttpServletRequestWrapper {
 		String login;
-		
+
 		public WrappedRequest(HttpServletRequest request, String login) {
 			super(request);
 			this.login = login;
-		}	
-		
+		}
+
 		@Override
 		public Principal getUserPrincipal() {
 			return () -> login;

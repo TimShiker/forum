@@ -14,6 +14,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
+import telran.java2022.security.context.SecurityContext;
 import telran.java2022.user.dao.UserRepository;
 import telran.java2022.user.model.User;
 
@@ -22,7 +23,7 @@ import telran.java2022.user.model.User;
 @Order(20)
 public class OwnerFilter implements Filter {
 	
-	final UserRepository userRepository;
+	final SecurityContext context;
 
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
@@ -32,15 +33,14 @@ public class OwnerFilter implements Filter {
 
 		if (checkEndPoint(request.getServletPath())) {
 			
-			User user = userRepository
-					.findById(request.getUserPrincipal().getName()).get();
+			telran.java2022.security.context.User user = context.getUser(request.getUserPrincipal().getName());;
 			
-			if(!isEqualsLogins(request.getServletPath(), user.getLogin()) 
+			if(!isEqualsLogins(request.getServletPath(), user.getUserName()) 
 					&& (isPostMethod(request.getMethod()) || isPutMethod(request.getMethod()))) {
 				response.sendError(403);
 				return;
 			}
-			else if (!isEqualsLogins(request.getServletPath(), user.getLogin())){
+			else if (!isEqualsLogins(request.getServletPath(), user.getUserName())){
 				request.setAttribute("ExecuteAdminFilter", true);
 			}
 		}
